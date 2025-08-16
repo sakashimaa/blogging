@@ -1,0 +1,4 @@
+[install]
+workspace = true
+
+symlink = true
