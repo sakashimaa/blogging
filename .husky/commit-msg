@@ -1,0 +1,51 @@
+#!/usr/bin/env sh
+
+# Husky commit-msg hook
+# Rules implemented:
+# 1. Trim leading/trailing whitespace on the first line.
+# 2. Uppercase the first character (if any).
+# 3. Remove all trailing dots (.) at the end of the first line.
+# Remaining lines (e.g., body) are left unchanged.
+
+. "$(dirname -- "$0")/_/husky.sh"
+
+commit_msg_file="$1"
+
+if [ ! -f "$commit_msg_file" ]; then
+	exit 0
+fi
+
+# Read first line
+first_line=$(head -n 1 "$commit_msg_file")
+
+# Trim spaces
+trimmed=$(printf '%s' "$first_line" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+
+# Remove trailing dots (one or many)
+trimmed=$(printf '%s' "$trimmed" | sed -e 's/\.*$//')
+
+# Uppercase first character only (leave rest as-is)
+if [ -n "$trimmed" ]; then
+	first_char=$(printf '%s' "$trimmed" | cut -c1)
+	rest=$(printf '%s' "$trimmed" | cut -c2-)
+	upper_first=$(printf '%s' "$first_char" | tr '[:lower:]' '[:upper:]')
+	formatted="$upper_first$rest"
+else
+	formatted="$trimmed"
+fi
+
+# Collect remaining lines, if any
+if tail -n +2 "$commit_msg_file" >/dev/null 2>&1; then
+	tail_lines=$(tail -n +2 "$commit_msg_file")
+else
+	tail_lines=""
+fi
+
+{
+	printf '%s\n' "$formatted"
+	if [ -n "$tail_lines" ]; then
+		printf '%s\n' "$tail_lines"
+	fi
+} > "$commit_msg_file"
+
+exit 0

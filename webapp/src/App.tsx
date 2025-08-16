@@ -1,7 +1,7 @@
 import { TrpcProvider } from './lib/trpc'
 import { AllBlogsPage } from './pages/AllBlogsPage'
 
-export const App = () => {
+export function App() {
   return (
     <TrpcProvider>
       <AllBlogsPage />
