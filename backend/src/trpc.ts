@@ -6,6 +6,8 @@ const blogs = [
   { id: 3, title: 'Blog 3', description: 'Blog 3 description' },
 ]
 
+const x: number = 'hello'
+
 const trpc = initTRPC.create()
 
 const trpcRouter = trpc.router({
